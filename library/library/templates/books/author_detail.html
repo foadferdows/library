@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ author.name }}</h2>
+<p>{{ author.bio|default:"-" }}</p>
+<p>country: {{ author.get_country_display|default:"-" }} | sex: {{ author.get_sex_display|default:"-" }}</p>
+<h3>books</h3>
+<ul>
+  {% for b in author.books.all %}
+    <li>{{ b.title }} ({{ b.get_category_display }})</li>
+  {% empty %}
+    <li class="muted">no recorded found</li>
+  {% endfor %}
+</ul>
+{% endblock %}

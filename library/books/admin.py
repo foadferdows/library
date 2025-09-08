@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Author, Book, Favorite, UserExtra
+from .models import Author, Book, Favorite, user_extra
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
@@ -18,7 +18,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ("user", "book", "date")
     search_fields = ("user__username", "book__title")
 
-@admin.register(UserExtra)
+@admin.register(user_extra)
 class UserExtraAdmin(admin.ModelAdmin):
-    list_display = ("user", "sex", "nationalcode")
-    search_fields = ("user__username", "nationalcode")
+    list_display = ("user_id", "sex", "nationalcode")
+    search_fields = ("user_id__username", "nationalcode")

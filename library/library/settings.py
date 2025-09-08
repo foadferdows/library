@@ -25,12 +25,14 @@ SECRET_KEY = 'django-insecure-rg&%g#h49@%56e1*=dgfn(+pv)^s^2)=fy8$j6kepxcgt+$)2c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'books',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'library.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,6 +72,9 @@ TEMPLATES = [
         },
     },
 ]
+
+# TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
+
 
 WSGI_APPLICATION = 'library.wsgi.application'
 

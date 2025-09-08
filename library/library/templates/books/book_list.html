@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}List of Books{% endblock %}
+{% block content %}
+
+<h2>List of Books</h2>
+
+{% if filter_form %}
+<form method="get" class="grid">
+  {{ filter_form.as_p }}
+  <button type="submit">Search</button>
+</form>
+
+<form method="post" action="{% url 'books:bulk_delete_filtered' %}">
+  {% csrf_token %}
+  {% for k,v in request.GET.items %}
+    <input type="hidden" name="{{ k }}" value="{{ v }}">
+  {% endfor %}
+  <button class="secondary" onclick="return confirm('delet?')">delet all results</button>
+</form>
+{% else %}
+<p class="muted">show my Favorites</p>
+{% endif %}
+
+<table role="grid">
+  <thead><tr>
+    <th>name</th><th>author</th><th>category</th><th>proce</th><th>publish date</th><th>action</th>
+  </tr></thead>
+  <tbody>
+    {% for b in books %}
+    <tr>
+      <td>{{ b.title }}</td>
+      <td><a href="{% url 'books:author_detail' b.author.pk %}">{{ b.author.name }}</a></td>
+      <td>{{ b.get_category_display }}</td>
+      <td>{{ b.price|default:"-" }}</td>
+      <td>{{ b.published_date|default:"-" }}</td>
+      <td>
+        <a href="{% url 'books:book_update' b.pk %}">Edit</a> |
+        <a href="{% url 'books:book_delete' b.pk %}">Delete</a>
+        {% if user.is_authenticated %} | <a href="{% url 'books:toggle_favorite' b.pk %}">★</a>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="muted">noting founded</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if is_paginated %}
+<nav>
+  <ul>
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|safe }}">Previous</a></li>
+    {% endif %}
+    <li>page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}</li>
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|safe }}">next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% endblock %}
