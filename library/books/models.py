@@ -12,7 +12,40 @@ countries = {
 categories = {  'FIC': 'Fiction',    'LIT': 'Literary Fiction',    'HISF': 'Historical Fiction',    'SFF': 'Science Fiction',    'FAN': 'Fantasy',    'MYS': 'Mystery & Detective',    'THR': 'Thriller',    'ROM': 'Romance',    'HOR': 'Horror',    'SS': 'Short Stories',    'GN': 'Comics & Graphic Novels',    'YA': 'Young Adult',    'CH': 'Childrens' ,    'POE': 'Poetry',    'DRA': 'Drama & Plays',    'BIO': 'Biography',    'MEM': 'Memoir',    'HIS': 'History',    'TC': 'True Crime',    'ESS': 'Essays',    'SCI': 'Science',    'TECH': 'Technology',    'ENG': 'Engineering',    'MATH': 'Mathematics',    'PSY': 'Psychology',    'SOC': 'Social Sciences',    'PHI': 'Philosophy',    'REL': 'Religion & Spirituality',    'BUS': 'Business',    'ECO': 'Economics',    'FIN': 'Finance & Investing',    'LAW': 'Law',    'POL': 'Politics',    'HEA': 'Health & Fitness',    'EDU': 'Education',    'LAN': 'Language & Linguistics',    'ART': 'Art & Design',    'PHO': 'Photography',    'MUS': 'Music',    'TRV': 'Travel',    'COO': 'Cooking & Food',    'CRA': 'Crafts & DIY',    'NAT': 'Nature & Environment',    'REF': 'Reference',    'TB': 'Textbook',    'OTH': 'Other'
 }
 
-User = get_user_model()
+sexs = ['male' , 'femail']
+
+# User = get_user_model()
+
+class User(models.Model):
+    id = models.CharField(blank=False,null=False)
+    phonenumber = models.CharField(blank=True,null=True)
+    firstname = models.CharField(max_length=50 , null=True, blank=False)
+    lastname = models.CharField(max_length=100 , null=True, blank=False)
+    email = models.CharField(max_length=150 , null=True, blank=False)
+    is_admin = models.BooleanField(null=False,blank=False)
+    update_at = jmodels.jDateField(null=True,blank=True)
+    created_at = jmodels.jDateField(null=True,blank=True)
+
+    def age(self):
+        if self.birth_date:
+            now = jmodels.jdatetime.date.today().year
+            return now - self.birth_date.year
+        return None
+
+    @property
+    def is_birthday(self):
+        if self.birth_date:
+            today = jmodels.jdatetime.date.today()
+            return (today.month == self.birth_date.month) and (today.day == self.birth_date.day)
+    
+
+class user_extra(models.Model):
+    user_id = models.ForeignKey(to=User,on_delete=models.CASCADE, related_name="users_extra")
+    sex = models.CharField(sexs , null=True , blank=True)
+    nationalcode = models.CharField(null=True , blank=True)
+    update_at = jmodels.jDateField(null=True,blank=True)
+    created_at = jmodels.jDateField(null=True,blank=True)
+
 
 class Author(models.Model):
     name = models.CharField(max_length=150)
@@ -27,12 +60,6 @@ class Author(models.Model):
             return now - self.birth_date.year
         return None
 
-    @property
-    def is_birthday(self):
-        if self.birth_date:
-            today = jmodels.jdatetime.date.today()
-            return (today.month == self.birth_date.month) and (today.day == self.birth_date.day)
-    
     def __str__(self):
         return self.name
 
@@ -43,7 +70,7 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="author_books")
     category = models.CharField(choices=categories,null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     published_date = jmodels.jDateField(null=True,blank=True)
