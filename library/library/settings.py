@@ -26,12 +26,22 @@ SECRET_KEY = 'django-insecure-rg&%g#h49@%56e1*=dgfn(+pv)^s^2)=fy8$j6kepxcgt+$)2c
 DEBUG = True
 
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'error',
+}
+
 ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # 'django.contrib.messages',
     'books',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,6 +57,8 @@ TIME_ZONE = "Asia/Tehran"
 LANGUAGE_CODE = "fa-ir"
 
 MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                # 'django.contrib.messages.context_processors.messages',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
