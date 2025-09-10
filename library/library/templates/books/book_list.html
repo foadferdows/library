@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% comment %} {% extends "base.html" %}
 {% block title %}List of Books{% endblock %}
 {% block content %}
 
@@ -59,4 +59,62 @@
 </nav>
 {% endif %}
 
-{% endblock %}
+{% endblock %} {% endcomment %}
+{% comment %} 
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>فهرست کتاب‌ها</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {max-width: 900px; margin: 24px auto; font-family: sans-serif; line-height: 1.8}
+    .book {padding: 16px 0}
+    .meta {color:#666; font-size: 0.95rem}
+    .actions a {text-decoration: none; margin-left: 8px}
+    hr {border:0; border-top:1px solid #eee; margin: 8px 0 20px}
+    .empty {color:#888}
+    .topbar {display:flex; justify-content: space-between; align-items:center; margin-bottom:16px}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>فهرست کتاب‌ها</h1>
+    <a href="{% url 'books:book_create' %}">+ کتاب جدید</a>
+  </div>
+
+  {% for b in books %}
+    <article class="book">
+      <h3>{{ b.title }}</h3>
+      <div class="meta">
+        نویسنده:
+        {% if b.author %}
+          <a href="{% url 'books:author_detail' b.author.pk %}">{{ b.author.name }}</a>
+        {% else %}
+          نامشخص
+        {% endif %}
+        | دسته: {{ b.get_category_display|default:"-" }}
+        | قیمت: {{ b.price|default:"-" }}
+        | تاریخ انتشار: {{ b.published_date|default:"-" }}
+      </div>
+
+      {% if b.description %}
+        <p>{{ b.description|truncatechars:200 }}</p>
+      {% endif %}
+
+      <p class="actions">
+        <a href="{% url 'books:book_update' b.pk %}">ویرایش</a> |
+        <a href="{% url 'books:book_delete' b.pk %}">حذف</a>
+        {% if user.is_authenticated %} | <a href="{% url 'books:toggle_favorite' b.pk %}">★ علاقه‌مندی</a>{% endif %}
+      </p>
+    </article>
+    <hr>
+  {% empty %}
+    <p class="empty">هیچ کتابی ثبت نشده است.</p>
+  {% endfor %}
+
+</body>
+</html> {% endcomment %}
+<h1>HI</h1>

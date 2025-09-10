@@ -1,0 +1,175 @@
+{% load humanize %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>فهرست کتاب‌ها</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --bg:#0f172a;       /* slate-900 */
+      --card:#111827;     /* gray-900 */
+      --muted:#94a3b8;    /* slate-400 */
+      --text:#e5e7eb;     /* gray-200 */
+      --accent:#22d3ee;   /* cyan-400 */
+      --accent-2:#a78bfa; /* violet-400 */
+      --border:#1f2937;   /* gray-800 */
+      --danger:#ef4444;   /* red-500 */
+      --ok:#10b981;       /* emerald-500 */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,var(--bg),#0b1022);
+      color:var(--text); font-family:IRANSans, Vazirmatn, Segoe UI, system-ui, sans-serif;
+      line-height:1.9; padding:24px;
+    }
+    .container{max-width:1100px;margin:auto}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin:8px 0 16px}
+    .topbar h1{font-size:1.4rem;margin:0}
+    .topbar .meta{color:var(--muted);font-size:.95rem}
+    .actions a.btn{
+      display:inline-block;padding:.5rem .9rem;border-radius:.7rem;text-decoration:none;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#0b1022; font-weight:700;
+    }
+    .card{
+      background:rgba(17,24,39,.6); backdrop-filter: blur(6px);
+      border:1px solid var(--border); border-radius:16px; padding:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px}
+    thead th{
+      text-align:right; font-weight:700; font-size:.92rem; letter-spacing:.2px;
+      background:rgba(31,41,55,.7); padding:12px; border-bottom:1px solid var(--border)
+    }
+    tbody td{padding:12px;border-bottom:1px solid var(--border); vertical-align:middle}
+    tbody tr:hover{background:rgba(2,6,23,.45)}
+    .title{font-weight:700}
+    .author a{color:var(--accent);text-decoration:none}
+    .badge{
+      display:inline-block;padding:.15rem .5rem;border-radius:.5rem;
+      background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.35);color:var(--accent-2);
+      font-size:.78rem; font-weight:600
+    }
+    .price{white-space:nowrap}
+    .muted{color:var(--muted)}
+    .row-actions a{color:var(--accent);text-decoration:none;margin-left:8px}
+    .row-actions a.danger{color:var(--danger)}
+    .empty{
+      text-align:center;padding:28px;color:var(--muted)
+    }
+    nav.pager{
+      display:flex;gap:8px;align-items:center;justify-content:center;margin:18px 0 6px
+    }
+    nav.pager a, nav.pager span.badge{
+      padding:.4rem .7rem;border:1px solid var(--border);border-radius:.6rem;text-decoration:none;color:var(--text)
+    }
+    nav.pager a:hover{background:rgba(31,41,55,.7)}
+    .fav{color:#fbbf24;text-decoration:none} /* amber star */
+    @media (max-width:760px){
+      thead{display:none}
+      table, tbody, tr, td{display:block;width:100%}
+      tbody td{display:flex;justify-content:space-between;gap:12px}
+      tbody td::before{content:attr(data-label);color:var(--muted)}
+      .row-actions{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <div>
+      <h1>‌Books list</h1>
+      <div class="meta">
+        count — {{ page_obj.paginator.count|intcomma }} | 
+        page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </div>
+    </div>
+    {% comment %} <div class="actions">
+      <a class="btn" href="{% url 'books:book_create' %}">+ کتاب جدید</a>
+    </div> {% endcomment %}
+  </div>
+
+  <div class="card">
+    <table role="grid" aria-label="Books">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Created Date</th>
+          <th style="width:230px">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in books %}
+          <tr>
+            <td class="title" data-label="Title">
+              {{ b.title }}
+              {% if b.description %}<div class="muted" style="font-size:.88rem">{{ b.description|truncatechars:90 }}</div>{% endif %}
+            </td>
+
+            <td class="author" data-label="Authors">
+              {% if b.author %}
+                <a href="{% url 'books:author_detail' b.author.pk %}">{{ b.author.name }}</a>
+              {% else %}
+                <span class="muted">—</span>
+              {% endif %}
+            </td>
+
+            <td data-label="Category">
+              {% if b.category %}
+                <span class="badge">{{ b.get_category_display }}</span>
+              {% else %}
+                <span class="muted">—</span>
+              {% endif %}
+            </td>
+
+            <td class="price" data-label="Price">
+              {% if b.price %}{{ b.price|floatformat:0|intcomma }}{% else %}<span class="muted">—</span>{% endif %}
+            </td>
+
+            <td data-label="Created Date">
+              {{ b.published_date|default:"—" }}
+            </td>
+
+            <td class="row-actions" data-label="Action">
+              {% comment %} <a href="{% url 'books:book_update' b.pk %}">ویرایش</a> {% endcomment %}
+              |
+              {% comment %} <a class="danger" href="{% url 'books:book_delete' b.pk %}">حذف</a> {% endcomment %}
+              {% comment %} {% if user.is_authenticated %}
+                |
+                <a class="fav" href="{% url 'books:toggle_favorite' b.pk %}" title="افزودن به علاقه‌مندی">★</a>
+              {% endif %} {% endcomment %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="empty">
+              noting founded.
+              {% comment %} <div style="margin-top:8px">
+                <a href="{% url 'books:book_create' %}" class="btn">+ اولین کتاب را اضافه کن</a>
+              </div> {% endcomment %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <nav class="pager" aria-label="pagination">
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next ▶</a>
+      {% endif %}
+      <span class="badge">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">◀ Previous</a>
+      {% endif %}
+
+    </nav>
+  </div>
+
+</div>
+</body>
+</html>

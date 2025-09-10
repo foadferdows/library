@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ author.name }}{% endblock %}
+{% block content %}
+  <h2>{{ author.name }}</h2>
+  <p>{{ author.bio|default:"-" }}</p>
+  <p>کشور: {{ author.get_country_display|default:"-" }} | جنسیت: {{ author.get_sex_display|default:"-" }}</p>
+
+  <h3>کتاب‌ها</h3>
+  <ul>
+    {% for b in author.author_books.all %} {# توجه: related_name فعلی مدل تو 'author_books' است #}
+      <li>{{ b.title }} — {{ b.get_category_display|default:"-" }}</li>
+    {% empty %}
+      <li class="muted">کتابی ثبت نشده است.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

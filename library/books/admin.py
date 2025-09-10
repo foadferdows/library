@@ -16,9 +16,11 @@ class BookAdmin(admin.ModelAdmin):
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ("user", "book", "date")
+    readonly_fields = ["date"]
     search_fields = ("user__username", "book__title")
 
 @admin.register(user_extra)
 class UserExtraAdmin(admin.ModelAdmin):
     list_display = ("user_id", "sex", "nationalcode")
+    readonly_fields = ("created_at", "update_at")
     search_fields = ("user_id__username", "nationalcode")

@@ -49,8 +49,8 @@ class user_extra(models.Model):
     user_id = models.OneToOneField(to=User,on_delete=models.CASCADE, related_name="users_extra")
     sex = models.CharField(choices=SEX_CHOICES , null=True , blank=True)
     nationalcode = models.CharField(max_length=10 ,null=True , blank=True)
-    update_at = jmodels.jDateField(null=True,blank=True)
-    created_at = jmodels.jDateField(null=True,blank=True)
+    update_at = jmodels.jDateField(auto_now_add=True,null=True,blank=True)
+    created_at = jmodels.jDateField(auto_now=True,null=True,blank=True)
 
 
 class Author(models.Model):
@@ -88,13 +88,14 @@ class Book(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self): return f"{self.title} — {self.author.name}"
+    def __str__(self): return f"{self.title} — {self.author.name} - {self.category}"
 
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="favorited_by")
-    date = jmodels.jDateField(null=True,blank=True)
+    date = jmodels.jDateField(auto_now_add=True,null=True,blank=True)
 
     class Meta:
         unique_together = ("user", "book")
+
