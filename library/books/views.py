@@ -1,8 +1,10 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
-from django.shortcuts import redirect,render ,get_object_or_404
+from django.shortcuts import redirect,render ,get_object_or_404 , reverse
 from django.contrib import messages
 from django.db.models import Q
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
@@ -35,6 +37,7 @@ class BookListView(ListView):
     
     def get_queryset(self):
         qs, _ = apply_filters(self.request)
+        self.filter_form = _
         if self.request.user.is_authenticated:
             fav_qs = Favorite.objects.filter(user=self.request.user, book=OuterRef("pk"))
             qs = qs.annotate(is_fav=Exists(fav_qs))
@@ -98,3 +101,38 @@ class AuthorDetailView(DetailView):
     model = Author
     template_name = "books/author_detail.html"
     context_object_name = "author"
+
+
+@login_required
+@require_POST
+def bulk_delete_books(request):
+    selected_ids = request.POST.getlist("selected_ids")
+
+
+    if not selected_ids:
+        messages.warning(request, "noting selected")
+        return redirect(_redirect_back_to_list_with_filters(request))
+
+    try:
+        with transaction.atomic():
+            qs = Book.objects.filter(pk__in=selected_ids)
+            deleted_count = qs.count()
+            qs.delete()         
+            print(deleted_count)
+        messages.success(request,f"{deleted_count} was deleted")
+    except Exception as e:
+        messages.error(request, f"we have a problem : {e}")
+
+    return redirect(_redirect_back_to_list_with_filters(request))
+
+
+def _redirect_back_to_list_with_filters(request):
+    base = reverse("books:book_list")
+    q = request.POST.get("q", "") or request.GET.get("q", "")
+    category = request.POST.get("category", "") or request.GET.get("category", "")
+    params = []
+    if q:
+        params.append(f"q={q}")
+    if category:
+        params.append(f"category={category}")
+    return f"{base}?{'&'.join(params)}" if params else base

@@ -5,6 +5,63 @@
   <meta charset="utf-8">
   <title>فهرست کتاب‌ها</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // انتخاب همه در همین صفحه
+    const checkAll = document.getElementById('check-all-on-page');
+    const rowBoxes = document.querySelectorAll('.row-checkbox');
+    const selectAllBtn = document.getElementById('select-all-results');
+    const selectAllInput = document.getElementById('select-all-input');
+    const banner = document.getElementById('select-all-banner');
+    const form = document.getElementById('bulk-delete-form');
+  
+    checkAll?.addEventListener('change', (e) => {
+      rowBoxes.forEach(cb => { cb.checked = e.target.checked; });
+    });
+  
+    selectAllBtn?.addEventListener('click', () => {
+      selectAllInput.value = '1';
+      banner.style.display = 'block';
+    });
+  
+    form?.addEventListener('submit', (e) => {
+
+      const isSelectAll = selectAllInput.value === '1';
+  
+      // پاک‌سازی ورودی‌های قبلی (اگر چند بار submit شود)
+      document.querySelectorAll('input[name="selected_ids"]').forEach(n => n.remove());
+      document.querySelectorAll('input[name="exclude_ids"]').forEach(n => n.remove());
+  
+      if (isSelectAll) {
+        // حالت حذفِ «همه نتایج»، ولی هر چیز تیک‌نخورده در این صفحه را exclude کن
+        rowBoxes.forEach(cb => {
+          if (!cb.checked) {
+            const ex = document.createElement('input');
+            ex.type = 'hidden';
+            ex.name = 'exclude_ids';
+            ex.value = cb.dataset.bookId;
+            form.appendChild(ex);
+          }
+        });
+      } else {
+        // حالت «فقط انتخاب‌شده‌ها»
+        const anyChecked = Array.from(rowBoxes).some(cb => cb.checked);
+        if (!anyChecked) {
+          alert('هیچ آیتمی انتخاب نشده است.');
+          e.preventDefault();
+          return;
+        }
+        rowBoxes.forEach(cb => {
+          if (cb.checked) {
+            const sel = document.createElement('input');
+            sel.type = 'hidden';
+            sel.name = 'selected_ids';
+            sel.value = cb.dataset.bookId;
+            form.appendChild(sel);
+          }
+        });
+      }
+    });
+  </script>
   <style>
     a.my-link:visited { color: #a78bfa; }  
     a.my-link:active  { opacity:.7 }
@@ -107,6 +164,7 @@
   </style>
 </head>
 <body>
+  
  <div class="container">
 
   <div class="topbar">
@@ -128,17 +186,17 @@
       <a class="btn" href="{% url 'books:book_create' %}">add new book</a>
     </div> 
     {% comment %} <div class="actions">
-      <a class="btn" href="{% url 'books:my_favorites' %}">my favs</a>
-    </div>  {% endcomment %}
+      <a class="btn" href="{% url 'books:bulk_delete_books' %}">Delete selected</a>
+    </div> {% endcomment %}
     {% if request.resolver_match.url_name == 'my_favorites' %}
   <div class="actions">
     <a class="btn active" href="{% url 'books:book_list' %}">all books</a>
   </div>
-{% else %}
+  {% else %}
   <div class="actions">
     <a class="btn" href="{% url 'books:my_favorites' %}">my favs</a>
   </div>
-{% endif %}
+  {% endif %}
   </div>   
 
   {% if messages %}
@@ -151,12 +209,16 @@
       </div>
     {% endfor %}
   </div>
-{% endif %}
-
+ {% endif %}
+ <form method="post" action="{% url 'books:bulk_delete_books' %}">
+  {% csrf_token %}
+  <input type="hidden" name="q" value="{{ request.GET.q }}">
+  <input type="hidden" name="category" value="{{ request.GET.category }}">
   <div class="card">
     <table role="grid" aria-label="Books">
       <thead>
         <tr>
+          <th style="width:48px"></th>
           <th>Title</th>
           <th>Author</th>
           <th>Category</th>
@@ -168,6 +230,9 @@
       <tbody>
         {% for b in books %}
           <tr>
+            <td>
+              <input type="checkbox" name="selected_ids" value="{{ b.id }}">
+            </td>
             <td class="title" data-label="Title">
               {{ b.title }}
               {% if b.description %}<div class="muted" style="font-size:.88rem">{{ b.description|truncatechars:90 }}</div>{% endif %}
@@ -215,14 +280,16 @@
           <tr>
             <td colspan="6" class="empty">
               noting founded.
-              {% comment %} <div style="margin-top:8px">
-                <a href="{% url 'books:book_create' %}" class="btn">+ اولین کتاب را اضافه کن</a>
-              </div> {% endcomment %}
+              <div style="margin-top:8px">
+                <a href="{% url 'books:book_create' %}" class="btn">add your first book +</a>
+              </div>
             </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+
+
 
     <nav class="pager" aria-label="pagination">
 
@@ -238,7 +305,13 @@
 
     </nav>
   </div>
-
+  <div class="actions">
+    <button type="submit" class="btn btn-danger"
+            onclick="return confirm('are you sure')">
+      Delete selected
+    </button>
+  </div>
+</form>
 </div>
 </body>
 </html>
