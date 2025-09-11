@@ -26,8 +26,6 @@ def apply_filters(request):
     return qs, form
 
 
-
-
 class BookListView(ListView):
     model = Book
     template_name = "books/book_list.html"
@@ -95,27 +93,6 @@ class MyFavoritesListView(LoginRequiredMixin, ListView):
         ctx["filter_form"] = None
         ctx["favorites_view"] = True
         return ctx
-
-# class AuthorDetailView(DetailView):
-#     model = Author
-#     template_name = "books/author_detail.html"
-#     context_object_name = "author"
-
-
-
-
-# def (request):
-#     if request.method == 'POST':
-#         form = RegistrationForm()
-#         if form.is_valid():
-#             Registration.objects.create(**form.cleaned_data)
-#             return HttpResponse("OK")
-#     else:
-#         form = RegistrationForm()
-#     return HttpResponse( )
-
-from django.views.generic import DetailView
-from .models import Author
 
 class AuthorDetailView(DetailView):
     model = Author

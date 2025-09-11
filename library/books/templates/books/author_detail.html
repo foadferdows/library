@@ -3,14 +3,14 @@
 {% block content %}
   <h2>{{ author.name }}</h2>
   <p>{{ author.bio|default:"-" }}</p>
-  <p>کشور: {{ author.get_country_display|default:"-" }} | جنسیت: {{ author.get_sex_display|default:"-" }}</p>
+  <p>Country : {{ author.get_country_display|default:"-" }} | Sex : {{ author.get_sex_display|default:"-" }}</p>
 
-  <h3>کتاب‌ها</h3>
+  <h3>Books :</h3>
   <ul>
-    {% for b in author.author_books.all %} {# توجه: related_name فعلی مدل تو 'author_books' است #}
+    {% for b in author.author_books.all %}
       <li>{{ b.title }} — {{ b.get_category_display|default:"-" }}</li>
     {% empty %}
-      <li class="muted">کتابی ثبت نشده است.</li>
+      <li class="muted">noting founded</li>
     {% endfor %}
   </ul>
 {% endblock %}

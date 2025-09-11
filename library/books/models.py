@@ -88,7 +88,7 @@ class Book(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self): return f"{self.title} — {self.author.name} - {self.category}"
+    def __str__(self): return f"{self.title} — {self.author.name}"
 
 
 class Favorite(models.Model):
