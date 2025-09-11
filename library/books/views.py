@@ -1,11 +1,12 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
-from django.shortcuts import redirect,render ,get_object_or_404 , reverse
+from django.shortcuts import redirect, reverse
 from django.contrib import messages
 from django.db.models import Q
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from .models import CATEGORY_CHOICES
@@ -13,7 +14,7 @@ from django.db.models import Exists, OuterRef
 from .models import Favorite
 
 from .models import Book, Favorite, Author
-from .forms import BookForm, BookFilterForm
+from .forms import BookForm, BookFilterForm 
 
 
 def apply_filters(request):

@@ -1,0 +1,113 @@
+{% load static %}
+<!doctype html>
+<html lang="en" dir="ltl">
+<head>
+  <meta charset="utf-8">
+  <title>ورود</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root{
+      --bg:#0f172a;       /* slate-900 */
+      --card:#111827;     /* gray-900 */
+      --muted:#94a3b8;    /* slate-400 */
+      --text:#e5e7eb;     /* gray-200 */
+      --accent:#22d3ee;   /* cyan-400 */
+      --accent-2:#a78bfa; /* violet-400 */
+      --border:#1f2937;   /* gray-800 */
+      --danger:#ef4444;   /* red-500 */
+      --ok:#10b981;       /* emerald-500 */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,var(--bg),#0b1022);
+      color:var(--text); font-family:IRANSans, Vazirmatn, Segoe UI, system-ui, sans-serif;
+      line-height:1.9; padding:24px;
+      min-height:100dvh; display:flex; align-items:center; justify-content:center;
+    }
+    .container{width:100%; max-width:520px}
+    .card{
+      background:rgba(17,24,39,.6); backdrop-filter: blur(6px);
+      border:1px solid var(--border); border-radius:16px; padding:20px 18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    h1{margin:0 0 12px; font-size:1.4rem}
+    p.muted{margin:.2rem 0 1rem; color:var(--muted); font-size:.95rem}
+
+    .field{margin:10px 0 14px}
+    .field label{display:block; margin-bottom:6px; font-weight:700; font-size:.95rem}
+    .field input{
+      width:100%; padding:.65rem .8rem; border-radius:.7rem;
+      background:rgba(17,24,39,.5); border:1px solid var(--border); color:var(--text);
+      outline:none;
+    }
+    .actions{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px}
+    .btn{
+      display:inline-block; padding:.6rem 1rem; border-radius:.8rem; border:0; cursor:pointer;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#0b1022; font-weight:800;
+    }
+    .link{color:var(--text); text-decoration:none; border:1px solid var(--border); padding:.5rem .75rem; border-radius:.7rem}
+    .link:hover{background:rgba(31,41,55,.4)}
+    .bottom{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px}
+    .note{color:var(--muted); font-size:.92rem}
+
+    /* messages */
+    .messages{margin:0 0 10px}
+    .msg{
+      margin:6px 0; padding:10px; border-radius:8px; border:1px solid var(--border);
+      background:rgba(59,130,246,.08); color:#bfdbfe  /* info default */
+    }
+    .msg-success{ border-color:#065f46 !important; background:rgba(16,185,129,.08); color:#a7f3d0 }
+    .msg-error  { border-color:#7f1d1d !important; background:rgba(239,68,68,.08); color:#fecaca }
+    .msg-warning{ border-color:#92400e !important; background:rgba(245,158,11,.08); color:#fde68a }
+
+    @media (max-width:520px){
+      .actions{flex-direction:column-reverse; align-items:stretch}
+      .bottom{flex-direction:column; align-items:stretch}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" role="region" aria-label="login form">
+      <h1>login</h1>
+      <p class="muted">please login</p>
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="msg {% if message.tags %}msg-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="field">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+
+        <div class="field">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+          {{ form.password.errors }}
+        </div>
+
+        <div class="actions">
+          <a class="link" href="{% url 'books:book_list' %}">go back</a>
+          <button type="submit" class="btn">enter</button>
+        </div>
+      </form>
+
+      <div class="bottom">
+        <span class="note">do not have account?</span>
+        <a class="link" href="{% url 'accounts:signup' %}">create account</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

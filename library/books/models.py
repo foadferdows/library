@@ -22,28 +22,8 @@ SEX_CHOICES = tuple(sexs.items())
 
 User = get_user_model()
 
-# class User(models.Model):
-#     id = models.CharField(blank=False,null=False)
-#     phonenumber = models.CharField(blank=True,null=True)
-#     firstname = models.CharField(max_length=50 , null=True, blank=False)
-#     lastname = models.CharField(max_length=100 , null=True, blank=False)
-#     email = models.CharField(max_length=150 , null=True, blank=False)
-#     is_admin = models.BooleanField(null=False,blank=False)
-#     update_at = jmodels.jDateField(null=True,blank=True)
-#     created_at = jmodels.jDateField(null=True,blank=True)
 
-#     def age(self):
-#         if self.birth_date:
-#             now = jmodels.jdatetime.date.today().year
-#             return now - self.birth_date.year
-#         return None
 
-#     @property
-#     def is_birthday(self):
-#         if self.birth_date:
-#             today = jmodels.jdatetime.date.today()
-#             return (today.month == self.birth_date.month) and (today.day == self.birth_date.day)
-    
 
 class user_extra(models.Model):
     user_id = models.OneToOneField(to=User,on_delete=models.CASCADE, related_name="users_extra")

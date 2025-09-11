@@ -3,10 +3,9 @@
 <html lang="fa" dir="ltl">
 <head>
   <meta charset="utf-8">
-  <title>فهرست کتاب‌ها</title>
+  <title>books list</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
-    // انتخاب همه در همین صفحه
     const checkAll = document.getElementById('check-all-on-page');
     const rowBoxes = document.querySelectorAll('.row-checkbox');
     const selectAllBtn = document.getElementById('select-all-results');
@@ -46,7 +45,7 @@
         // حالت «فقط انتخاب‌شده‌ها»
         const anyChecked = Array.from(rowBoxes).some(cb => cb.checked);
         if (!anyChecked) {
-          alert('هیچ آیتمی انتخاب نشده است.');
+          alert('noting sellected');
           e.preventDefault();
           return;
         }
@@ -170,6 +169,15 @@
   <div class="topbar">
     <div>
       <h1>‌Books list</h1>
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit">signout</button>
+      </form>
+{% else %}
+  <a href="{% url 'accounts:login' %}">login</a> | <a href="{% url 'accounts:signup' %}">signup</a>
+{% endif %}
+
       <div class="meta">
         count — {{ page_obj.paginator.count|intcomma }} | 
         page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}

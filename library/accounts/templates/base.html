@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" dir="ltl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}FOAD FERDOWS LIBRARY{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style> body{max-width:1100px;margin:auto} .muted{opacity:.7} </style>
+</head>
+<body>
+  <nav>
+    <ul><li><strong><a href="{% url 'books:book_list' %}">Home</a></strong></li></ul>
+    <ul>
+      <li><a href="{% url 'books:book_create' %}">add new book +</a></li>
+      {% if user.is_authenticated %}
+    <li><a href="{% url 'books:my_favorites' %}">Favorites</a></li> 
+      {% else %}
+        <li><a href="/admin/login/">Enter</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  <main>
+    {% for m in messages %}<article class="contrast">{{ m }}</article>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

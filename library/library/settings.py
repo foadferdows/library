@@ -26,6 +26,11 @@ SECRET_KEY = 'django-insecure-rg&%g#h49@%56e1*=dgfn(+pv)^s^2)=fy8$j6kepxcgt+$)2c
 DEBUG = True
 
 
+LOGIN_REDIRECT_URL = "books:book_list"
+LOGOUT_REDIRECT_URL = "books:book_list"
+LOGIN_URL = "accounts:login"
+
+
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
@@ -43,6 +48,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # 'django.contrib.messages',
     'books',
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
